@@ -1,0 +1,40 @@
+# Copy to terraform.tfvars. Never commit the populated file.
+
+aws_region         = "<REGION:terraform_state>"
+expected_account_id = "<ACCOUNT_ID:terraform_state>"
+
+# Change to true only after reviewing the local-state and migration warnings.
+acknowledge_local_state_risk = false
+
+bucket_name_prefix = "company-landing-zone-tfstate"
+
+bucket_administrator_arns = [
+  "<IAM_ROLE_ARN:terraform_state_bucket_administrator>",
+]
+
+kms_administrator_arns = [
+  "<IAM_ROLE_ARN:terraform_state_kms_administrator>",
+]
+
+state_access_principals = {
+  platform_ci = {
+    principal_arn = "<IAM_ROLE_ARN:terraform_execution>"
+    state_key_prefixes = [
+      "bootstrap",
+      "organization",
+      "security",
+      "logging",
+      "shared-services",
+      "development",
+      "staging",
+      "production",
+    ]
+  }
+}
+
+owner       = "<OWNER:terraform_state>"
+cost_center = "<COST_CENTER:terraform_state>"
+
+additional_tags = {
+  DataClassification = "confidential"
+}

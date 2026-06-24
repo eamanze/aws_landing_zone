@@ -1,0 +1,20 @@
+{
+  "organization_id": "<ORGANIZATION_ID:o-example>",
+  "management_account_id": "<ACCOUNT_ID:management>",
+  "root_id": "<ORGANIZATION_ROOT_ID:r-example>",
+  "ous": {
+    "security": { "id": "<OU_ID:security>", "name": "Security" },
+    "infrastructure": { "id": "<OU_ID:infrastructure>", "name": "Infrastructure" },
+    "non_production": { "id": "<OU_ID:non_production>", "name": "Non-Production" },
+    "production": { "id": "<OU_ID:production>", "name": "Production" },
+    "sandbox": { "id": "<OU_ID:sandbox>", "name": "Sandbox" }
+  },
+  "accounts": {
+    "security": { "id": "<ACCOUNT_ID:security_audit>", "name": "<ACCOUNT_NAME:security_audit>", "ou_key": "security", "owner": "<OWNER:security_team>", "environment": "security", "cost_center": "<COST_CENTER:security>", "managed_by": "control-tower" },
+    "log_archive": { "id": "<ACCOUNT_ID:log_archive>", "name": "<ACCOUNT_NAME:log_archive>", "ou_key": "security", "owner": "<OWNER:security_team>", "environment": "logging", "cost_center": "<COST_CENTER:security>", "managed_by": "control-tower" },
+    "shared_services": { "id": "<ACCOUNT_ID:shared_services>", "name": "<ACCOUNT_NAME:shared_services>", "ou_key": "infrastructure", "owner": "<OWNER:platform_team>", "environment": "shared-services", "cost_center": "<COST_CENTER:platform>", "managed_by": "control-tower" },
+    "development": { "id": "<ACCOUNT_ID:development>", "name": "<ACCOUNT_NAME:development>", "ou_key": "non_production", "owner": "<OWNER:development>", "environment": "development", "cost_center": "<COST_CENTER:development>", "managed_by": "control-tower" },
+    "staging": { "id": "<ACCOUNT_ID:staging>", "name": "<ACCOUNT_NAME:staging>", "ou_key": "non_production", "owner": "<OWNER:staging>", "environment": "staging", "cost_center": "<COST_CENTER:staging>", "managed_by": "control-tower" },
+    "production": { "id": "<ACCOUNT_ID:production>", "name": "<ACCOUNT_NAME:production>", "ou_key": "production", "owner": "<OWNER:production>", "environment": "production", "cost_center": "<COST_CENTER:production>", "managed_by": "control-tower" }
+  }
+}

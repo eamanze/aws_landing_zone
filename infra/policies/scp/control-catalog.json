@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "last_verified": "2026-06-24",
+  "identifier_note": "Resolve current opaque global control ARNs with AWS Control Catalog ListControls/GetControl before enablement; do not infer them from legacy identifiers.",
+  "requirements": {
+    "cloudtrail_protection": {
+      "native_coverage": "covered_for_control_tower_owned_logging",
+      "native_controls": [
+        "Mandatory: Disallow Configuration Changes to CloudTrail (landing zones below 4.0)",
+        "Mandatory LZ 4.0: Disallow modifications to Amazon S3 buckets managed by AWS Control Tower",
+        "Strongly recommended detective: Detect whether an account has AWS CloudTrail or CloudTrail Lake enabled",
+        "CT.CLOUDTRAIL.PR.2: Require an AWS CloudTrail trail to have log file validation activated"
+      ],
+      "custom_policy": null,
+      "decision": "Do not duplicate Control Tower-owned trail or centralized-logging protections. Validate the deployed landing-zone version and control state."
+    },
+    "leaving_the_organization": {
+      "native_coverage": "uncovered",
+      "native_controls": [],
+      "custom_policy": "deny_leave_organization",
+      "decision": "Deny organizations:LeaveOrganization on child OUs."
+    },
+    "approved_regions": {
+      "native_coverage": "covered",
+      "native_controls": [
+        "CT.MULTISERVICE.PV.1: Deny access to AWS based on the requested AWS Region for an organizational unit"
+      ],
+      "custom_policy": null,
+      "decision": "Use the configurable OU Region deny with AllowedRegions, ExemptedPrincipalARNs, and ExemptedActions; do not maintain a stale custom global-service list."
+    },
+    "public_s3_restrictions": {
+      "native_coverage": "partial",
+      "native_controls": [
+        "CT.S3.PR.1: Require an Amazon S3 bucket to have block public access settings configured",
+        "Strongly recommended detective: Detect Whether Public Read Access to Amazon S3 Buckets is Allowed",
+        "Strongly recommended detective: Detect Whether Public Write Access to Amazon S3 Buckets is Allowed"
+      ],
+      "custom_policy": "restrict_s3_public_access",
+      "decision": "Fill the direct-API runtime gap by denying public canned ACLs and unauthorized changes to Block Public Access. Account-level BPA must be enabled first."
+    },
+    "security_service_protection": {
+      "native_coverage": "partial",
+      "native_controls": [
+        "CT.GUARDDUTY.PR.1: Require an Amazon GuardDuty detector to have Amazon S3 protection activated",
+        "Service-Managed Standard: AWS Control Tower in Security Hub CSPM"
+      ],
+      "custom_policy": "protect_security_services",
+      "decision": "Native controls configure/check selected capabilities but do not prevent GuardDuty, Security Hub CSPM, or Access Analyzer disablement and disassociation."
+    },
+    "log_archive_protection": {
+      "native_coverage": "covered_for_control_tower_owned_buckets",
+      "native_controls": [
+        "Mandatory LZ 4.0: Disallow modifications to Amazon S3 buckets managed by AWS Control Tower",
+        "AWS-GR_AUDIT_BUCKET_ENCRYPTION_ENABLED",
+        "AWS-GR_AUDIT_BUCKET_LOGGING_ENABLED",
+        "AWS-GR_AUDIT_BUCKET_POLICY_CHANGES_PROHIBITED",
+        "AWS-GR_AUDIT_BUCKET_RETENTION_POLICY"
+      ],
+      "custom_policy": null,
+      "decision": "Use the mandatory/current Control Tower lifecycle for Control Tower buckets; protect non-Control-Tower log stores with their owning bucket/KMS policies rather than a duplicate broad SCP."
+    },
+    "root_user_restrictions": {
+      "native_coverage": "covered",
+      "native_controls": [
+        "AWS-GR_RESTRICT_ROOT_USER_ACCESS_KEYS: Disallow creation of access keys for the root user",
+        "AWS-GR_RESTRICT_ROOT_USER: Disallow actions as a root user",
+        "Strongly recommended detective: Detect Whether MFA for the Root User is Enabled"
+      ],
+      "custom_policy": null,
+      "decision": "Enable the two native preventive controls on child OUs after validating account-recovery consequences."
+    },
+    "iam_user_restrictions": {
+      "native_coverage": "partial",
+      "native_controls": [
+        "Elective detective: Detect Whether MFA is Enabled for AWS IAM Users",
+        "Elective detective: Detect Whether MFA is Enabled for AWS IAM Users of the AWS Console"
+      ],
+      "custom_policy": "restrict_iam_users",
+      "decision": "Native controls detect MFA posture but do not enforce the project's federation-only prohibition on IAM users, login profiles, and long-lived keys."
+    },
+    "privilege_escalation_restrictions": {
+      "native_coverage": "partial",
+      "native_controls": [
+        "Mandatory: Disallow Changes to AWS IAM Roles Set Up by AWS Control Tower and AWS CloudFormation",
+        "CT.IAM.PV.1: Disallow modification of an AWS IAM role that AWS Control Tower utilizes to manage AWS Backup resources"
+      ],
+      "custom_policy": "restrict_privilege_escalation",
+      "decision": "Native controls protect Control Tower-owned roles, not general IAM policy, trust, boundary, group, and PassRole escalation paths."
+    }
+  }
+}

@@ -1,0 +1,64 @@
+# Copy to account-registry.auto.tfvars (ignored by Git) and replace every typed
+# placeholder. Never commit account IDs, emails, credentials, or backend values.
+
+aws_region                    = "<AWS_REGION:control_tower_home>"
+expected_organization_id      = "<ORGANIZATION_ID:o-example>"
+expected_management_account_id = "<ACCOUNT_ID:management>"
+organization_root_id          = "<ORGANIZATION_ROOT_ID:r-example>"
+
+account_registry = {
+  security = {
+    account_id   = "<ACCOUNT_ID:security_audit>"
+    account_name = "<ACCOUNT_NAME:security_audit>"
+    ou_key       = "security"
+    owner        = "<OWNER:security_team>"
+    environment  = "security"
+    cost_center  = "<COST_CENTER:security>"
+    managed_by   = "control-tower"
+  }
+  log_archive = {
+    account_id   = "<ACCOUNT_ID:log_archive>"
+    account_name = "<ACCOUNT_NAME:log_archive>"
+    ou_key       = "security"
+    owner        = "<OWNER:security_team>"
+    environment  = "logging"
+    cost_center  = "<COST_CENTER:security>"
+    managed_by   = "control-tower"
+  }
+  shared_services = {
+    account_id   = "<ACCOUNT_ID:shared_services>"
+    account_name = "<ACCOUNT_NAME:shared_services>"
+    ou_key       = "infrastructure"
+    owner        = "<OWNER:platform_team>"
+    environment  = "shared-services"
+    cost_center  = "<COST_CENTER:platform>"
+    managed_by   = "control-tower"
+  }
+  development = {
+    account_id   = "<ACCOUNT_ID:development>"
+    account_name = "<ACCOUNT_NAME:development>"
+    ou_key       = "non_production"
+    owner        = "<OWNER:development>"
+    environment  = "development"
+    cost_center  = "<COST_CENTER:development>"
+    managed_by   = "control-tower"
+  }
+  staging = {
+    account_id   = "<ACCOUNT_ID:staging>"
+    account_name = "<ACCOUNT_NAME:staging>"
+    ou_key       = "non_production"
+    owner        = "<OWNER:staging>"
+    environment  = "staging"
+    cost_center  = "<COST_CENTER:staging>"
+    managed_by   = "control-tower"
+  }
+  production = {
+    account_id   = "<ACCOUNT_ID:production>"
+    account_name = "<ACCOUNT_NAME:production>"
+    ou_key       = "production"
+    owner        = "<OWNER:production>"
+    environment  = "production"
+    cost_center  = "<COST_CENTER:production>"
+    managed_by   = "control-tower"
+  }
+}

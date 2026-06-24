@@ -1,0 +1,6 @@
+bucket                 = "<S3_BUCKET_NAME:terraform_state>"
+key                    = "organization/terraform.tfstate"
+region                 = "<AWS_REGION:state_backend>"
+encrypt                = true
+use_lockfile           = true
+expected_bucket_owner  = "<ACCOUNT_ID:state_backend_owner>"

@@ -1,0 +1,5 @@
+terraform {
+  # Replace backend.tf with this declaration only after the S3 bucket and KMS
+  # key exist and the migration plan in MIGRATION.md is approved.
+  backend "s3" {}
+}

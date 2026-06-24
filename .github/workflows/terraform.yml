@@ -1,0 +1,44 @@
+name: terraform-validation
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/terraform.yml"
+      - ".terraform-version"
+      - "Makefile"
+      - "infra/**"
+      - "scripts/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: terraform-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  scaffold-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Read pinned Terraform version
+        id: terraform-version
+        shell: bash
+        run: echo "value=$(tr -d '[:space:]' < .terraform-version)" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ steps.terraform-version.outputs.value }}
+          terraform_wrapper: false
+
+      - name: Run safe scaffold tests
+        run: make test
+
+      - name: Report optional validation gates
+        run: |
+          echo "TFLint and Checkov become required CI gates when deployable Terraform roots are introduced."
+          echo "This scaffold workflow never runs terraform plan or apply."

@@ -1,0 +1,70 @@
+# Operating-system and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Terraform working directories and state
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.plan
+tfplan
+crash.log
+crash.*.log
+
+# Terraform variable files can contain secrets. Commit examples only.
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
+!*.tfvars.json.example
+backend*.hcl
+!backend*.hcl.example
+
+# Local account registries contain AWS account and OU identifiers.
+account-registry.json
+account-registry.local.json
+!account-registry.json.example
+
+# Local Terraform CLI and override configuration
+.terraformrc
+terraform.rc
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Credentials, keys, tokens, and local environment files
+.env
+.env.*
+!.env.example
+.aws/
+credentials
+credentials.*
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.crt
+*.csr
+*.token
+
+# Generated validation evidence may contain account identifiers or findings.
+docs/evidence/*
+!docs/evidence/README.md
+
+# Generated reports and caches
+.checkov/
+.tflint.d/
+.pytest_cache/
+coverage/
+reports/
+
+# Keep provider dependency lock files under version control.
+!.terraform.lock.hcl

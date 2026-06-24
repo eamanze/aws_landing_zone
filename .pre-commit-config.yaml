@@ -1,0 +1,36 @@
+repos:
+  - repo: local
+    hooks:
+      - id: terraform-fmt-check
+        name: Terraform format check
+        entry: make fmt-check
+        language: system
+        pass_filenames: false
+        files: \.tf$
+
+      - id: terraform-validate
+        name: Terraform validation
+        entry: make validate
+        language: system
+        pass_filenames: false
+        files: \.tf$
+
+      - id: policy-json
+        name: Policy JSON validation
+        entry: make policy-json
+        language: system
+        pass_filenames: false
+        files: ^infra/policies/.*\.json$
+
+      - id: shell-syntax
+        name: Shell syntax validation
+        entry: make script-syntax
+        language: system
+        pass_filenames: false
+        files: ^scripts/.*\.sh$
+
+      - id: sensitive-file-names
+        name: Reject likely credential and generated-state files
+        entry: scripts/check-sensitive-files.sh
+        language: script
+        pass_filenames: true
