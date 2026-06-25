@@ -23,7 +23,7 @@ variable "target_ou_ids" {
 }
 
 variable "approved_exception_role_arns" {
-  description = "Exact approved role ARNs exempted from conditional custom controls. Keep this list minimal; AWSControlTowerExecution is added separately."
+  description = "Legacy/global exact role ARNs exempted from all conditional custom controls. Prefer policy_exception_role_arns for narrower approvals. AWSControlTowerExecution is added separately."
   type        = set(string)
   default     = []
 
@@ -33,6 +33,35 @@ variable "approved_exception_role_arns" {
       can(regex("^arn:(aws|aws-us-gov|aws-cn):iam::[0-9]{12}:role/[A-Za-z0-9+=,.@_/-]+$", arn)) && !strcontains(arn, "*")
     ])
     error_message = "Exception principals must be exact IAM role ARNs without wildcards."
+  }
+}
+
+variable "policy_exception_role_arns" {
+  description = "Per-policy exact role ARN exceptions. Keys may be protect_security_services, restrict_iam_users, restrict_privilege_escalation, or restrict_s3_public_access. Deny-leave has no exception."
+  type        = map(set(string))
+  default     = {}
+
+  validation {
+    condition = alltrue([
+      for key in keys(var.policy_exception_role_arns) :
+      contains([
+        "protect_security_services",
+        "restrict_iam_users",
+        "restrict_privilege_escalation",
+        "restrict_s3_public_access",
+      ], key)
+    ])
+    error_message = "policy_exception_role_arns keys may only target conditional custom policies; deny_leave_organization has no exception."
+  }
+
+  validation {
+    condition = alltrue(flatten([
+      for role_arns in values(var.policy_exception_role_arns) : [
+        for arn in role_arns :
+        can(regex("^arn:(aws|aws-us-gov|aws-cn):iam::[0-9]{12}:role/[A-Za-z0-9+=,.@_/-]+$", arn)) && !strcontains(arn, "*")
+      ]
+    ]))
+    error_message = "Every policy-specific exception principal must be an exact IAM role ARN without wildcards."
   }
 }
 

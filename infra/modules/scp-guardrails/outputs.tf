@@ -27,3 +27,13 @@ output "attachment_targets" {
     }
   }
 }
+
+output "exception_role_arns_by_policy" {
+  description = "Effective exact exception role ARNs by policy, excluding the built-in AWSControlTowerExecution role-name pattern."
+  value = {
+    for key in local.custom_policy_keys : key => concat(
+      local.global_exception_role_arns,
+      local.policy_exception_role_arns[key],
+    )
+  }
+}

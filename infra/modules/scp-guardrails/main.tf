@@ -1,4 +1,12 @@
 locals {
+  custom_policy_keys = [
+    "deny_leave_organization",
+    "protect_security_services",
+    "restrict_iam_users",
+    "restrict_privilege_escalation",
+    "restrict_s3_public_access",
+  ]
+
   # AWS documents AWSControlTowerExecution as the role used by Control Tower to
   # maintain governed account baselines. SCPs do not restrict service-linked
   # roles, but direct AWS service calls are also excluded below.
@@ -6,17 +14,24 @@ locals {
     "arn:${var.aws_partition}:iam::*:role/AWSControlTowerExecution",
   ]
 
-  conditional_exception_role_patterns = concat(
-    local.control_tower_exception_role_patterns,
-    sort(tolist(var.approved_exception_role_arns)),
-  )
+  global_exception_role_arns = sort(tolist(var.approved_exception_role_arns))
 
-  exception_conditions = {
-    ArnNotLike = {
-      "aws:PrincipalARN" = local.conditional_exception_role_patterns
-    }
-    Bool = {
-      "aws:PrincipalIsAWSService" = "false"
+  policy_exception_role_arns = {
+    for key in local.custom_policy_keys : key => sort(tolist(lookup(var.policy_exception_role_arns, key, [])))
+  }
+
+  exception_conditions_by_policy = {
+    for key in local.custom_policy_keys : key => {
+      ArnNotLike = {
+        "aws:PrincipalARN" = concat(
+          local.control_tower_exception_role_patterns,
+          local.global_exception_role_arns,
+          local.policy_exception_role_arns[key],
+        )
+      }
+      Bool = {
+        "aws:PrincipalIsAWSService" = "false"
+      }
     }
   }
 
@@ -49,7 +64,7 @@ locals {
             "guardduty:UpdateOrganizationConfiguration",
           ]
           Resource  = "*"
-          Condition = local.exception_conditions
+          Condition = local.exception_conditions_by_policy.protect_security_services
         },
         {
           Sid    = "ProtectSecurityHubConfiguration"
@@ -63,14 +78,14 @@ locals {
             "securityhub:UpdateOrganizationConfiguration",
           ]
           Resource  = "*"
-          Condition = local.exception_conditions
+          Condition = local.exception_conditions_by_policy.protect_security_services
         },
         {
           Sid       = "ProtectAccessAnalyzers"
           Effect    = "Deny"
           Action    = ["access-analyzer:DeleteAnalyzer"]
           Resource  = "*"
-          Condition = local.exception_conditions
+          Condition = local.exception_conditions_by_policy.protect_security_services
         },
       ]
     })
@@ -89,7 +104,7 @@ locals {
             "iam:UpdateLoginProfile",
           ]
           Resource  = "arn:${var.aws_partition}:iam::*:user/*"
-          Condition = local.exception_conditions
+          Condition = local.exception_conditions_by_policy.restrict_iam_users
         }
       ]
     })
@@ -118,7 +133,7 @@ locals {
             "iam:UpdateAssumeRolePolicy",
           ]
           Resource  = "*"
-          Condition = local.exception_conditions
+          Condition = local.exception_conditions_by_policy.restrict_privilege_escalation
         }
       ]
     })
@@ -134,7 +149,7 @@ locals {
             "s3:PutObjectAcl",
           ]
           Resource = "*"
-          Condition = merge(local.exception_conditions, {
+          Condition = merge(local.exception_conditions_by_policy.restrict_s3_public_access, {
             StringEquals = {
               "s3:x-amz-acl" = [
                 "authenticated-read",
@@ -154,7 +169,7 @@ locals {
             "s3:PutBucketPublicAccessBlock",
           ]
           Resource  = "*"
-          Condition = local.exception_conditions
+          Condition = local.exception_conditions_by_policy.restrict_s3_public_access
         },
       ]
     })

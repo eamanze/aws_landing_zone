@@ -3,7 +3,7 @@
 ## Status
 
 Reviewed against the official AWS Control Tower Controls Reference Guide on
-2026-06-24. This catalog is design and plan evidence, not approval to enable a
+2026-06-26. This catalog is design and plan evidence, not approval to enable a
 control or attach an SCP.
 
 AWS has removed the old static global-identifier table because it was outdated.
@@ -69,15 +69,15 @@ Custom conditional SCPs exempt only:
 - `AWSControlTowerExecution`, using the documented cross-account role-name
   pattern because the account IDs differ by governed account;
 - direct AWS service calls identified by `aws:PrincipalIsAWSService=true`; and
-- exact approved IAM role ARNs supplied through configuration.
+- exact approved IAM role ARNs supplied through policy-specific configuration.
 
 AWS documents that SCPs do not affect service-linked roles. No custom policy
 denies service-linked-role lifecycle APIs. See [SCP effects and exclusions](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html).
 
 The leave-organization policy has no exception. Break-glass, routine admin, and
 Terraform roles are not automatically exempt. Every exact exception requires a
-business owner, security approver, affected actions, compensating detection,
-expiry, and removal plan.
+business owner, security approver, affected policy, affected actions,
+compensating detection, expiry, and removal plan.
 
 ## Unresolved before any attachment
 

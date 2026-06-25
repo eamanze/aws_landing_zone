@@ -24,9 +24,9 @@ Residual risks:
 - An SCP cannot inspect arbitrary S3 bucket-policy JSON to determine whether a
   new policy is public. Account-level BPA plus native proactive/detective controls
   remain required.
-- Shared exceptions apply to all conditional policies in one module instance.
-  Deploy separate instances where a security role should not receive IAM or S3
-  exceptions.
+- Policy-specific exceptions are supported and should be used by default. The
+  legacy global exception input should require explicit security approval because
+  it exempts the role from every conditional custom SCP.
 - Control Tower control and custom SCP denies accumulate. Detaching the custom
   policy may not remove a deny imposed by a native/inherited control.
 - The project does not yet have approved real OU IDs, role ARNs, soak periods,

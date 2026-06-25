@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "last_verified": "2026-06-24",
+  "last_verified": "2026-06-26",
   "identifier_note": "Resolve current opaque global control ARNs with AWS Control Catalog ListControls/GetControl before enablement; do not infer them from legacy identifiers.",
   "requirements": {
     "cloudtrail_protection": {

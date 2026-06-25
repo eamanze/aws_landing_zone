@@ -52,8 +52,11 @@ run "plan_sandbox_attachments" {
   command = plan
 
   variables {
-    target_ou_ids                        = ["ou-abcd-12345678"]
-    approved_exception_role_arns         = ["arn:aws:iam::111111111111:role/SandboxGuardrailOperator"]
+    target_ou_ids = ["ou-abcd-12345678"]
+    policy_exception_role_arns = {
+      restrict_privilege_escalation = ["arn:aws:iam::111111111111:role/SandboxIamGuardrailOperator"]
+      restrict_s3_public_access     = ["arn:aws:iam::111111111111:role/SandboxS3GuardrailOperator"]
+    }
     attach_deny_leave_organization       = true
     attach_protect_security_services     = true
     attach_restrict_iam_users            = true
@@ -84,8 +87,18 @@ run "plan_sandbox_attachments" {
   }
 
   assert {
-    condition     = strcontains(local.policy_documents["restrict_privilege_escalation"], "arn:aws:iam::111111111111:role/SandboxGuardrailOperator")
-    error_message = "The exact approved exception role must appear in conditional policy JSON."
+    condition     = strcontains(local.policy_documents["restrict_privilege_escalation"], "arn:aws:iam::111111111111:role/SandboxIamGuardrailOperator")
+    error_message = "The exact policy-specific IAM exception role must appear in the privilege-escalation policy JSON."
+  }
+
+  assert {
+    condition     = !strcontains(local.policy_documents["restrict_iam_users"], "arn:aws:iam::111111111111:role/SandboxIamGuardrailOperator")
+    error_message = "Policy-specific exceptions must not leak into other conditional policies."
+  }
+
+  assert {
+    condition     = strcontains(local.policy_documents["restrict_s3_public_access"], "arn:aws:iam::111111111111:role/SandboxS3GuardrailOperator")
+    error_message = "The exact policy-specific S3 exception role must appear in the S3 policy JSON."
   }
 }
 
@@ -122,4 +135,23 @@ run "reject_wildcard_exception_role" {
   }
 
   expect_failures = [var.approved_exception_role_arns]
+}
+
+run "reject_invalid_policy_exception_key" {
+  command = plan
+
+  variables {
+    policy_exception_role_arns = {
+      deny_leave_organization = ["arn:aws:iam::111111111111:role/InvalidException"]
+    }
+    tags = {
+      Project     = "multi-account-landing-zone"
+      Environment = "test"
+      Owner       = "platform-team"
+      ManagedBy   = "terraform"
+      CostCenter  = "test"
+    }
+  }
+
+  expect_failures = [var.policy_exception_role_arns]
 }

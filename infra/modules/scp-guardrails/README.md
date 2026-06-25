@@ -30,11 +30,14 @@ for rollout risks.
 | `restrict_privilege_escalation` | Native IAM controls protect selected Control Tower roles, not general privilege-escalation APIs | High operational risk; deployment, security, and incident roles need separately reviewed exact exceptions |
 | `restrict_s3_public_access` | Native proactive/detective controls do not fully prevent direct-API Block Public Access tampering | Requires account-level BPA to be enabled first; policy cannot inspect arbitrary bucket-policy JSON |
 
-Exception role ARNs must be exact IAM role ARNs without wildcards. An exception
-is shared by the four conditional policies, so use separate module instances if
-different policies require different principals. Do not exempt routine admin or
-break-glass roles by default. Exceptions require an owner, reason, expiry, and
-security approval.
+Exception role ARNs must be exact IAM role ARNs without wildcards. Prefer
+`policy_exception_role_arns` so a role is exempted only from the specific custom
+policy it must operate. The legacy `approved_exception_role_arns` input remains
+available for unusual cases that intentionally need the same exception across
+all conditional policies, but it should be avoided in normal rollout. Do not
+exempt routine admin or break-glass roles by default. Exceptions require an
+owner, reason, affected policy, affected actions, expiry, compensating detection,
+and security approval.
 
 ## Policy validation
 
