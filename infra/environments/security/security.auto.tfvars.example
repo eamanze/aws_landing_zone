@@ -1,0 +1,36 @@
+deployment_scope = "security-regional"
+aws_region       = "eu-west-1"
+approved_regions = ["eu-west-1", "eu-west-2"]
+
+current_account_id    = "<ACCOUNT_ID:current_plan_account>"
+management_account_id = "<ACCOUNT_ID:management>"
+security_account_id   = "<ACCOUNT_ID:security>"
+
+# Keep empty until cost and plan are approved.
+cost_approval = ""
+
+control_tower_manages_config = true
+
+enable_guardduty_delegated_admin   = false
+enable_guardduty                   = false
+enable_securityhub_delegated_admin = false
+enable_securityhub                 = false
+enable_securityhub_finding_aggregator = false
+enable_access_analyzer             = false
+enable_access_analyzer_delegated_admin = false
+enable_config_aggregator           = false
+enable_s3_account_public_access_block = false
+enable_inspector_delegated_admin   = false
+enable_inspector                   = false
+enable_macie_delegated_admin       = false
+enable_macie                       = false
+enable_alert_routing               = false
+alert_target_arn                   = null
+
+tags = {
+  Project     = "multi-account-landing-zone"
+  Environment = "security"
+  Owner       = "platform-team"
+  ManagedBy   = "terraform"
+  CostCenter  = "<COST_CENTER:required>"
+}

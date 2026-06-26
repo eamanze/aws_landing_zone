@@ -1,0 +1,5 @@
+bucket       = "<S3_BUCKET:terraform_state>"
+key          = "security/<SCOPE>/<REGION>/terraform.tfstate"
+region       = "<REGION:terraform_state>"
+encrypt      = true
+use_lockfile = true

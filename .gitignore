@@ -58,6 +58,7 @@ credentials.*
 # Generated validation evidence may contain account identifiers or findings.
 docs/evidence/*
 !docs/evidence/README.md
+!docs/evidence/*-template.md
 
 # Generated reports and caches
 .checkov/
